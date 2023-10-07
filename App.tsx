@@ -2,6 +2,13 @@ import * as React from 'react';
 import {Text, View, StyleSheet, Button} from 'react-native';
 import Video from 'react-native-video';
 
+/**
+ * Questions:
+ * - How can I know in which bitrate the video is running?
+ * - How can I preload the video?
+ * - Why audio is not playing in Android?
+ */
+
 const audioTracks = {
   preview: 'track_0sec_silence',
   activity: 'track_05sec_silence_side_plank_at_wall',
@@ -10,24 +17,22 @@ const audioTracks = {
 export default function App() {
   const [isPaused, setIsPaused] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(false);
-  const [currentTime, setCurrentTime] = React.useState(0);
+  // const [currentTime, setCurrentTime] = React.useState(0);
   const videoPlayerRef: React.MutableRefObject<Video | null> =
     React.useRef(null);
   const [currentAudioTrack, setCurrentAudioTrack] = React.useState(
     audioTracks.preview,
   );
-  const restartVideo = () => {
+  const restartVideo = React.useCallback(() => {
     console.log('restarting video');
     videoPlayerRef.current?.seek(0);
     setIsMuted(false);
     setIsPaused(false);
-    setCurrentTime(0);
-  };
+    // setCurrentTime(0);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.paragraph}>My Video Project </Text>
-
       <Video
         source={{
           uri: 'https://stream.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco.m3u8',
@@ -36,7 +41,7 @@ export default function App() {
         paused={isPaused}
         muted={isMuted}
         style={styles.video}
-        controls={false}
+        controls={true}
         selectedAudioTrack={{
           type: 'title',
           value: currentAudioTrack,
@@ -48,11 +53,13 @@ export default function App() {
           setIsMuted(true);
         }}
         onError={error => console.error('🔥 onError', error)}
-        onProgress={data => setCurrentTime(data.currentTime)}
+        // onProgress={data => setCurrentTime(data.currentTime)}
         onFrameChange={data => console.log('🚀 onFrameChange', data)}
         onBuffer={data => console.log('🚀 onBuffer', data)}
         onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
-        onLoad={data => console.log('🚀 onLoad', data)}
+        onLoad={data => {
+          console.log('🚀 onLoad', data.audioTracks);
+        }}
         onLoadStart={() => console.log('🚀 onLoadStart')}
         onReadyForDisplay={() => console.log('🚀 onReadyForDisplay')}
         // bufferConfig={{
@@ -76,7 +83,7 @@ export default function App() {
           }}
           title={'Restart'}
         />
-        <Text>Current time: {currentTime}</Text>
+        {/* <Text>Current time: {currentTime}</Text> */}
         <Button
           onPress={() => {
             restartVideo();
