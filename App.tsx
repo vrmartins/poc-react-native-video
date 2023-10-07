@@ -1,131 +1,111 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import * as React from 'react';
+import {Text, View, StyleSheet, Button} from 'react-native';
 import Video from 'react-native-video';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const audioTracks = {
+  preview: 'track_0sec_silence',
+  activity: 'track_05sec_silence_side_plank_at_wall',
+};
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+export default function App() {
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [isMuted, setIsMuted] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(0);
+  const videoPlayerRef: React.MutableRefObject<Video | null> =
+    React.useRef(null);
+  const [currentAudioTrack, setCurrentAudioTrack] = React.useState(
+    audioTracks.preview,
+  );
+  const restartVideo = () => {
+    console.log('restarting video');
+    videoPlayerRef.current?.seek(0);
+    setIsMuted(false);
+    setIsPaused(false);
+    setCurrentTime(0);
+  };
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.paragraph}>My Video Project </Text>
+
       <Video
         source={{
           uri: 'https://stream.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco.m3u8',
-          type: 'm3u8',
-        }} // Can be a URL or a local file.
-        // ref={ref => {
-        //   this.player = ref;
-        // }} // Store reference
-        // onBuffer={this.onBuffer} // Callback when remote video is buffering
-        // onError={this.videoError} // Callback when video cannot be loaded
-        // style={styles.backgroundVideo}
+        }}
+        ref={videoPlayerRef}
+        paused={isPaused}
+        muted={isMuted}
+        style={styles.video}
+        controls={false}
+        selectedAudioTrack={{
+          type: 'title',
+          value: currentAudioTrack,
+        }}
+        poster="https://image.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco/thumbnail.png?time=3"
+        repeat={true}
+        onEnd={() => {
+          console.log('🚀 onEnd');
+          setIsMuted(true);
+        }}
+        onError={error => console.error('🔥 onError', error)}
+        onProgress={data => setCurrentTime(data.currentTime)}
+        onFrameChange={data => console.log('🚀 onFrameChange', data)}
+        onBuffer={data => console.log('🚀 onBuffer', data)}
+        onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
+        onLoad={data => console.log('🚀 onLoad', data)}
+        onLoadStart={() => console.log('🚀 onLoadStart')}
+        onReadyForDisplay={() => console.log('🚀 onReadyForDisplay')}
+        // bufferConfig={{
+        //   minBufferMs: 0,
+        //   maxBufferMs: 1000,
+        //   bufferForPlaybackMs: 500,
+        //   bufferForPlaybackAfterRebufferMs: 5000,
+        // }}
+        // audioOnly={true} // it only works if there's a valid poster
       />
+      <View style={{flex: 1}}>
+        <Button
+          onPress={() => setIsPaused(prev => !prev)}
+          title={isPaused ? 'Resume' : 'Pause'}
+        />
+        <Button
+          onPress={() => {
+            restartVideo();
+            console.log('changing audio track to', audioTracks.preview);
+            setCurrentAudioTrack(audioTracks.preview);
+          }}
+          title={'Restart'}
+        />
+        <Text>Current time: {currentTime}</Text>
+        <Button
+          onPress={() => {
+            restartVideo();
+
+            console.log('changing audio track to', audioTracks.activity);
+            setCurrentAudioTrack(audioTracks.activity);
+          }}
+          title={'Start Exercise'}
+        />
+        <Text>Current audio track: {currentAudioTrack}</Text>
+      </View>
     </View>
   );
 }
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ecf0f1',
+    padding: 8,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  video: {
+    flex: 1,
   },
-  sectionDescription: {
-    marginTop: 8,
+  paragraph: {
+    margin: 24,
     fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
-
-export default App;
