@@ -36,6 +36,7 @@ export default function App() {
       <Video
         source={{
           uri: 'https://stream.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco.m3u8',
+          type: 'm3u8',
         }}
         ref={videoPlayerRef}
         paused={isPaused}
@@ -46,7 +47,7 @@ export default function App() {
           type: 'title',
           value: currentAudioTrack,
         }}
-        poster="https://image.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco/thumbnail.png?time=3"
+        poster="https://image.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco/thumbnail.png?time=5"
         repeat={true}
         onEnd={() => {
           console.log('🚀 onEnd');
@@ -58,8 +59,11 @@ export default function App() {
         onBuffer={data => console.log('🚀 onBuffer', data)}
         onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
         onLoad={data => {
-          console.log('🚀 onLoad', data.audioTracks);
+          console.log('🚀 onLoad.videoTracks', data.videoTracks);
         }}
+        onPlaybackRateChange={data =>
+          console.log('🚀 onPlaybackRateChange', data)
+        }
         onLoadStart={() => console.log('🚀 onLoadStart')}
         onReadyForDisplay={() => console.log('🚀 onReadyForDisplay')}
         // bufferConfig={{
