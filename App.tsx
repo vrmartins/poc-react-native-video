@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {Text, View, StyleSheet, Button} from 'react-native';
 import Video from 'react-native-video';
-
 /**
  * Questions:
+ * - video is taking ~10sec to load using 3G. .Is it blocking for the project?
  * - How can I know in which bitrate the video is running?
  * - How can I preload the video?
  * - Why audio is not playing in Android?
@@ -36,13 +36,14 @@ export default function App() {
       <Video
         source={{
           uri: 'https://stream.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco.m3u8',
+          // uri: originalUrl,
           type: 'm3u8',
         }}
         ref={videoPlayerRef}
         paused={isPaused}
         muted={isMuted}
         style={styles.video}
-        controls={true}
+        // controls={true}
         selectedAudioTrack={{
           type: 'title',
           value: currentAudioTrack,
@@ -59,7 +60,7 @@ export default function App() {
         onBuffer={data => console.log('🚀 onBuffer', data)}
         onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
         onLoad={data => {
-          console.log('🚀 onLoad.videoTracks', data.videoTracks);
+          console.log('🚀 onLoad', data.textTracks);
         }}
         onPlaybackRateChange={data =>
           console.log('🚀 onPlaybackRateChange', data)
