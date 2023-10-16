@@ -14,8 +14,8 @@ const audioTracks = {
   activity: 'track_05sec_silence_side_plank_at_wall',
 };
 
-export default function MyVideo() {
-  const [isPaused, setIsPaused] = React.useState(false);
+export default function MyVideo({hidden = false}: {hidden?: boolean}) {
+  const [isPaused, setIsPaused] = React.useState(hidden); // if the video player is hidden, the video starts paused
   const [isMuted, setIsMuted] = React.useState(false);
   // const [currentTime, setCurrentTime] = React.useState(0);
   const videoPlayerRef: React.MutableRefObject<Video | null> =
@@ -43,7 +43,7 @@ export default function MyVideo() {
         ref={videoPlayerRef}
         paused={isPaused}
         muted={isMuted}
-        style={styles.video}
+        style={[styles.video, hidden ? {opacity: 0} : {}]}
         controls={true}
         resizeMode="contain"
         selectedAudioTrack={{
