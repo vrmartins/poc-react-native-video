@@ -1,21 +1,33 @@
 import * as React from 'react';
 import MyVideo from './components/MyVideo';
-import {Button} from 'react-native';
-/**
- * Questions:
- * - video is taking ~10sec to load using 3G. .Is it blocking for the project?
- * - How can I know in which bitrate the video is running?
- * - How can I preload the video?
- * - Why audio is not playing in Android?
- */
+import { NavigationContainer } from '@react-navigation/native';
+import { Button, Text, View } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+function PauseScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Pause Screen</Text>
+    </View>
+  );
+}
+function HomeScreen({ navigation }) {
+  return <><MyVideo />
+   <Button
+        title="Go to Pause"
+        onPress={() => navigation.navigate('Pause')}
+      /></>
+}
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [isVisible, setIsVisible] = React.useState(false);
   return (
-    <>
-      <MyVideo hidden />
-      {isVisible && <MyVideo />}
-      <Button title="Show Video" onPress={() => setIsVisible(true)} />
-    </>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Pause" component={PauseScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

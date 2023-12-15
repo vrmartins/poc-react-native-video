@@ -24,12 +24,20 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
     audioTracks.preview,
   );
   const restartVideo = React.useCallback(() => {
-    console.log('restarting video');
+    // console.log('restarting video');
     videoPlayerRef.current?.seek(0);
     setIsMuted(false);
     setIsPaused(false);
     // setCurrentTime(0);
   }, []);
+
+  React.useEffect(() => {
+    const now = Date.now()
+    console.log('Mount MyVideo', now)
+    return () => {
+      console.log('Unmount MyVideo', now)
+    }
+  })
 
   return (
     <View style={styles.container}>
@@ -44,7 +52,7 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
         paused={isPaused}
         muted={isMuted}
         style={[styles.video, hidden ? {opacity: 0} : {}]}
-        controls={true}
+        controls={false}
         resizeMode="contain"
         selectedAudioTrack={{
           type: 'title',
