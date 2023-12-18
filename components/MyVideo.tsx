@@ -32,12 +32,12 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
   }, []);
 
   React.useEffect(() => {
-    const now = Date.now()
-    console.log('Mount MyVideo', now)
+    const now = Date.now();
+    console.log('Mount MyVideo', now);
     return () => {
-      console.log('Unmount MyVideo', now)
-    }
-  },[])
+      console.log('Unmount MyVideo', now);
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
