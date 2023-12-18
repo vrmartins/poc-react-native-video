@@ -1,8 +1,10 @@
+import 'react-native-gesture-handler';
 import * as React from 'react';
 import MyVideo from './components/MyVideo';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { Button, Text, View } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useFlipper } from '@react-navigation/devtools';
 
 function PauseScreen() {
   return (
@@ -13,19 +15,27 @@ function PauseScreen() {
 }
 function HomeScreen({ navigation }) {
   return <><MyVideo />
-   <Button
-        title="Go to Pause"
-        onPress={() => navigation.navigate('Pause')}
-      /></>
+    <Button
+      title="Go to Pause"
+      onPress={() => navigation.navigate('Pause')}
+    /></>
 }
 
-const Stack = createNativeStackNavigator();
-
 export default function App() {
+
+  const Stack = createStackNavigator();
+  
+  const navigationRef = useNavigationContainerRef();
+  
+  useFlipper(navigationRef);
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator
+      // screenOptions={{detachPreviousScreen: false}}
+      >
+        <Stack.Screen name="Home" component={HomeScreen}
+          options={{ detachPreviousScreen: false }}
+        />
         <Stack.Screen name="Pause" component={PauseScreen} />
       </Stack.Navigator>
     </NavigationContainer>

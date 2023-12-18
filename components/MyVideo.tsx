@@ -17,7 +17,7 @@ const audioTracks = {
 export default function MyVideo({hidden = false}: {hidden?: boolean}) {
   const [isPaused, setIsPaused] = React.useState(hidden); // if the video player is hidden, the video starts paused
   const [isMuted, setIsMuted] = React.useState(false);
-  // const [currentTime, setCurrentTime] = React.useState(0);
+  const [currentTime, setCurrentTime] = React.useState(0);
   const videoPlayerRef: React.MutableRefObject<Video | null> =
     React.useRef(null);
   const [currentAudioTrack, setCurrentAudioTrack] = React.useState(
@@ -37,7 +37,7 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
     return () => {
       console.log('Unmount MyVideo', now)
     }
-  })
+  },[])
 
   return (
     <View style={styles.container}>
@@ -65,7 +65,7 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
           setIsMuted(true);
         }}
         onError={error => console.error('🔥 onError', error)}
-        // onProgress={data => setCurrentTime(data.currentTime)}
+        onProgress={data => setCurrentTime(data.currentTime)}
         onFrameChange={data => console.log('🚀 onFrameChange', data)}
         onBuffer={data => console.log('🚀 onBuffer', data)}
         onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
@@ -94,16 +94,16 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
           onPress={() => setIsPaused(prev => !prev)}
           title={isPaused ? 'Resume' : 'Pause'}
         />
-        <Button
+        {/* <Button
           onPress={() => {
             restartVideo();
             console.log('changing audio track to', audioTracks.preview);
             setCurrentAudioTrack(audioTracks.preview);
           }}
           title={'Restart'}
-        />
+        /> */}
         {/* <Text>Current time: {currentTime}</Text> */}
-        <Button
+        {/* <Button
           onPress={() => {
             restartVideo();
 
@@ -111,8 +111,8 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
             setCurrentAudioTrack(audioTracks.activity);
           }}
           title={'Start Exercise'}
-        />
-        <Text>Current audio track: {currentAudioTrack}</Text>
+        /> */}
+        {/* <Text>Current audio track: {currentAudioTrack}</Text> */}
       </View>
     </View>
   );
