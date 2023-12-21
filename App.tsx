@@ -13,9 +13,8 @@ export default function App() {
   const [isVisible, setIsVisible] = React.useState(false);
   return (
     <>
-      <MyVideo hidden />
-      {isVisible && <MyVideo />}
-      <Button title="Show Video" onPress={() => setIsVisible(true)} />
+        {isVisible && <MyVideo/>}
+      <Button title="Toggle Show Video" onPress={() => setIsVisible(!isVisible)} />
     </>
   );
 }
