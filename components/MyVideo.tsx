@@ -31,19 +31,21 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
     // setCurrentTime(0);
   }, []);
 
+  const ONE_SECOND = 1000;
   return (
     <View style={styles.container}>
       <Video
         source={{
+          uri: 'https://stream.mux.com/iWybZBJdK02RoSNbuuGsAbM93eDcVTUZgbatfLEpLaqU.m3u8',
           // uri: 'https://stream.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco.m3u8',
-          uri: 'https://stream.mux.com/K01D1Ytly201sGXkj01dAzv957GFa302Mo7exeWYTao4anI.m3u8', // 21 minutes video in 1080p
+          // uri: 'https://stream.mux.com/K01D1Ytly201sGXkj01dAzv957GFa302Mo7exeWYTao4anI.m3u8', // 21 minutes video in 1080p
           // uri: originalUrl,
           type: 'm3u8',
         }}
         ref={videoPlayerRef}
         paused={isPaused}
-        muted={isMuted}
-        style={[styles.video, hidden ? {opacity: 0} : {}]}
+        muted={false}
+        style={styles.video}
         controls={true}
         resizeMode="contain"
         selectedAudioTrack={{
@@ -51,7 +53,8 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
           value: currentAudioTrack,
         }}
         poster="https://image.mux.com/KfaKKN1rwKfW5SHYjlBLd5Qgvl102qf2YW9haG9MhAco/thumbnail.png?time=5"
-        repeat={true}
+        // repeat={true}
+        reportBandwidth
         onEnd={() => {
           console.log('🚀 onEnd');
           setIsMuted(true);
@@ -62,50 +65,50 @@ export default function MyVideo({hidden = false}: {hidden?: boolean}) {
         onBuffer={data => console.log('🚀 onBuffer', data)}
         onBandwidthUpdate={data => console.log('🚀 onBandwidthUpdate', data)}
         onLoad={data => {
-          console.log('🚀 onLoad', data.textTracks);
+          console.log('🚀 onLoad', data);
         }}
-        onPlaybackRateChange={data =>
-          console.log('🚀 onPlaybackRateChange', data)
-        }
+        // onPlaybackRateChange={data =>
+        //   console.log('🚀 onPlaybackRateChange', data)
+        // }
         onVideoBuffer={() => console.log('🚀 onVideoBuffer')}
         onLoadStart={() => console.log('🚀 onLoadStart')}
         onVideoLoad={() => console.log('🚀 onVideoLoad')}
         onReadyForDisplay={() => console.log('🚀 onReadyForDisplay')}
-        // preferredForwardBufferDuration={}
-        // bufferConfig={}
-        // bufferConfig={{
-        //   minBufferMs: 0,
-        //   maxBufferMs: 1000,
-        //   bufferForPlaybackMs: 500,
-        //   bufferForPlaybackAfterRebufferMs: 5000,
-        // }}
-        // audioOnly={true} // it only works if there's a valid poster
+        testID={"videoPlayer"}
+        accessible
+        // accessibilityLabel={accessibilityLabel}
+        // accessibilityHint={accessibilityHint}
+        // ref={videoPlayerRef}
+        // style={style}
+        // resizeMode={resizeMode}
+        // paused={isPaused}
+        // muted={isMuted}
+        // repeat={repeat}
+        rate={1.0}
+        // onLoadStart={onLoadStart}
+        // onLoad={onLoad}
+        // onReadyForDisplay={onReadyForDisplay}
+        // onError={onLoadError}
+        playInBackground // due to a bug in react-native-video, this is needed for the visual part of the video to exist when the video is brought back into foreground
+        // onSeek={onSeek}
+        // onBuffer={onBuffer}
+        // reportBandwidth
+        // onBandwidthUpdate={onBandwidthUpdate}
+        posterResizeMode={"cover"}
+        bufferConfig={{
+          minBufferMs: 5 * ONE_SECOND,
+          maxBufferMs: 30 * ONE_SECOND,
+          bufferForPlaybackMs: 1 * ONE_SECOND,
+          bufferForPlaybackAfterRebufferMs: 1 * ONE_SECOND,
+        }}
+        // playWhenInactive={playWhenInactive}
+        // onEnd={onEnd}
+        // onProgress={onProgress}
+        // textTracks={textTracks}
+        // selectedTextTrack={selectedTextTrack}
+        // subtitleStyle={subtitleStyle}
+        // progressUpdateInterval={progressUpdateInterval}
       />
-      <View style={{flex: 1}}>
-        <Button
-          onPress={() => setIsPaused(prev => !prev)}
-          title={isPaused ? 'Resume' : 'Pause'}
-        />
-        <Button
-          onPress={() => {
-            restartVideo();
-            console.log('changing audio track to', audioTracks.preview);
-            setCurrentAudioTrack(audioTracks.preview);
-          }}
-          title={'Restart'}
-        />
-        {/* <Text>Current time: {currentTime}</Text> */}
-        <Button
-          onPress={() => {
-            restartVideo();
-
-            console.log('changing audio track to', audioTracks.activity);
-            setCurrentAudioTrack(audioTracks.activity);
-          }}
-          title={'Start Exercise'}
-        />
-        <Text>Current audio track: {currentAudioTrack}</Text>
-      </View>
     </View>
   );
 }
